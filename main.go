@@ -9,8 +9,11 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
 	"time"
 )
+
+var cookiesPath string
 
 func main() {
 
@@ -41,7 +44,7 @@ func main() {
 }
 func setCookies(ctx context.Context) error {
 	return chromedp.Run(ctx, chromedp.ActionFunc(func(ctx context.Context) error {
-		bytes, err := ioutil.ReadFile("e://cookies.txt")
+		bytes, err := ioutil.ReadFile(cookiesPath)
 		if err != nil {
 			return err
 		}
@@ -65,7 +68,7 @@ func getCookies(ctx context.Context) error {
 			if err != nil {
 				return err
 			}
-			err = ioutil.WriteFile("e://cookies.txt", bytes, os.ModePerm)
+			err = ioutil.WriteFile(cookiesPath, bytes, os.ModePerm)
 			return err
 		}), chromedp.Sleep(100 * time.Second),
 	})
@@ -115,4 +118,8 @@ func getQrCode(ctx context.Context) {
 	if err := ioutil.WriteFile("e://qrCode.png", qrCode, os.ModePerm); err != nil {
 		log.Fatal(err)
 	}
+}
+func init() {
+	cookiesPath, _ = os.UserHomeDir()
+	cookiesPath = filepath.Join(cookiesPath, "cookies.txt")
 }
