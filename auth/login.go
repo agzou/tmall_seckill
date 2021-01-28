@@ -7,6 +7,7 @@ import (
 	"github.com/chromedp/cdproto/dom"
 	"github.com/chromedp/cdproto/runtime"
 	"github.com/chromedp/chromedp"
+	"log"
 	"time"
 )
 
@@ -24,7 +25,7 @@ func Login() chromedp.Action {
 			chromedp.WaitNotPresent(`J_loginIframe`, chromedp.ByID))
 	})
 }
-func GoCar() chromedp.Action {
+func GoCar(targetTime time.Time) chromedp.Action {
 	return chromedp.Tasks{
 		chromedp.Navigate("https://cart.taobao.com/cart.htm?from=btop"),
 		chromedp.QueryAfter(`[href$="20739895092"]`, func(ctx context.Context, id runtime.ExecutionContextID, node ...*cdp.Node) error {
@@ -41,9 +42,22 @@ func GoCar() chromedp.Action {
 			if err != nil {
 				return err
 			}
-			if err := chromedp.Run(ctx, chromedp.Click([]cdp.NodeID{nodeID}, chromedp.ByNodeID),
-				chromedp.Sleep(7*time.Second),
-				chromedp.Click(`#J_Go`, chromedp.ByQuery)); err != nil {
+			err = chromedp.Run(ctx,
+				chromedp.Click([]cdp.NodeID{nodeID}, chromedp.ByNodeID),
+				chromedp.Sleep(10*time.Second),
+				chromedp.Click(`#submitOrderPC_1 .go-btn`, chromedp.ByQuery),
+				chromedp.QueryAfter(`#J_Go`, func(ctx context.Context, id runtime.ExecutionContextID, node ...*cdp.Node) error {
+					startTime := targetTime.UnixNano() - time.Now().UnixNano()/1e6
+					time.Sleep(time.Duration(startTime) * time.Millisecond)
+					log.Printf("ID[%d]将在%d毫秒后执行任务", id.Int64(), startTime)
+					time.Sleep(2 * time.Minute)
+					err := chromedp.Run(ctx, chromedp.Click(`#J_Go`, chromedp.ByQuery))
+					if err != nil {
+						return err
+					}
+					return nil
+				}, chromedp.ByQuery))
+			if err != nil {
 				return err
 			}
 			return nil

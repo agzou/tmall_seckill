@@ -7,6 +7,7 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
+	"sync"
 	"time"
 	"tmall_seckill/auth"
 )
@@ -17,25 +18,36 @@ func main() {
 	defer cc()
 	ctx, cc = chromedp.NewContext(ctx, chromedp.WithLogf(log.Printf))
 	defer cc()
+	loc, _ := time.LoadLocation("Local")
+	t, _ := time.ParseInLocation("2006-01-02 15:04:05", "2021-01-28 20:00:00", loc)
+	total := 2
+	wg := sync.WaitGroup{}
+	wg.Add(total)
 	if auth.HasCookies() {
-		if err := chromedp.Run(ctx, chromedp.Tasks{
-			auth.SetCookies(),
-			chromedp.Navigate("https://www.tmall.com/"),
-			auth.GoCar(),
-		}); err != nil {
-			log.Fatal(err)
+		for i := 0; i < total; i++ {
+			go func(wg *sync.WaitGroup) {
+				defer wg.Done()
+				c, _ := chromedp.NewContext(ctx)
+				if err := chromedp.Run(c, chromedp.Tasks{
+					auth.SetCookies(),
+					chromedp.Navigate("https://www.tmall.com/"),
+					auth.GoCar(t),
+				}); err != nil {
+					log.Fatal(err)
+				}
+			}(&wg)
 		}
 	} else {
 		if err := chromedp.Run(ctx, chromedp.Tasks{
 			auth.Login(),
 			auth.SaveCookies(),
 			chromedp.Navigate("https://www.tmall.com/"),
-			auth.GoCar(),
+			auth.GoCar(t),
 		}); err != nil {
 			log.Fatal(err)
 		}
 	}
-	time.Sleep(20 * time.Minute)
+	wg.Wait()
 }
 
 func initOptions() []chromedp.ExecAllocatorOption {
