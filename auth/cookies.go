@@ -48,7 +48,12 @@ func SaveCookies() chromedp.Action {
 		return err
 	})
 }
-
+func RemoveCookies() {
+	err := os.Remove(cookiesPath)
+	if err != nil {
+		panic(err)
+	}
+}
 func init() {
 	p, _ := os.UserHomeDir()
 	cookiesPath = filepath.Join(p, "cookies.txt")

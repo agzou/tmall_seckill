@@ -13,16 +13,18 @@ import (
 )
 
 func main() {
-
 	ctx, cc := chromedp.NewExecAllocator(context.Background(), initOptions()...)
 	defer cc()
 	ctx, cc = chromedp.NewContext(ctx, chromedp.WithLogf(log.Printf))
 	defer cc()
 	loc, _ := time.LoadLocation("Local")
-	t, _ := time.ParseInLocation("2006-01-02 15:04:05", "2021-01-28 20:00:00", loc)
+	t, _ := time.ParseInLocation("2006-01-02 15:04:05", "2021-01-29 17:15:00", loc)
 	total := 2
 	wg := sync.WaitGroup{}
 	wg.Add(total)
+	if err := chromedp.Run(ctx); err != nil {
+		log.Fatal(err)
+	}
 	if auth.HasCookies() {
 		for i := 0; i < total; i++ {
 			go func(wg *sync.WaitGroup) {
