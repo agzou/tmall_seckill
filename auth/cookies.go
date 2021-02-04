@@ -12,6 +12,10 @@ import (
 
 var cookiesPath string
 
+func GetCookiesPath() string {
+	return cookiesPath
+}
+
 //判断cookies 是否已经存在
 func HasCookies() bool {
 	_, err := os.Stat(cookiesPath)
@@ -48,6 +52,7 @@ func SaveCookies() chromedp.Action {
 		return err
 	})
 }
+
 func RemoveCookies() {
 	err := os.Remove(cookiesPath)
 	if err != nil {

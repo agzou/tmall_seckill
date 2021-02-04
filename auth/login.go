@@ -44,17 +44,19 @@ func GoCar(targetTime time.Time) chromedp.Action {
 			}
 			err = chromedp.Run(ctx,
 				chromedp.Click([]cdp.NodeID{nodeID}, chromedp.ByNodeID),
-				chromedp.Sleep(10*time.Second),
 				chromedp.QueryAfter(`#J_Go`, func(ctx context.Context, id runtime.ExecutionContextID, node ...*cdp.Node) error {
-					startTime := targetTime.UnixNano() - time.Now().UnixNano()
+					startTime := targetTime.Sub(time.Now())
 					if startTime < 0 {
 						return errors.New("抢购时间已过")
 					}
-					log.Printf("ID[%d]将在%d毫秒后执行任务", id.Int64(), time.Duration(startTime).Milliseconds())
-					time.Sleep(time.Duration(startTime))
-					err := chromedp.Run(ctx, chromedp.Click(`#J_Go`, chromedp.ByQuery),
+					log.Printf("ID[%d]将在%s小时后执行任务", id.Int64(), startTime.String())
+					err := chromedp.Run(ctx,
+						chromedp.Sleep(startTime),
+						chromedp.Click(`#J_Go`, chromedp.ByQuery),
 						chromedp.WaitVisible(`#submitOrderPC_1 .go-btn`, chromedp.ByQuery),
+						chromedp.Sleep(1*time.Second),
 						chromedp.Click(`#submitOrderPC_1 .go-btn`, chromedp.ByQuery),
+						chromedp.Sleep(15*time.Minute),
 					)
 					if err != nil {
 						return err
