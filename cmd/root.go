@@ -8,14 +8,19 @@ import (
 )
 
 var Version = "v0.01"
-var rootCmd = &cobra.Command{Use: "tmall_seckill", Version: Version, SilenceErrors: true}
+var Debug = false
+var rootCmd = &cobra.Command{Use: "tmall_seckill", Version: Version, SilenceErrors: true, SilenceUsage: true}
 var GlobalCtx context.Context
 var GlobalCancelFunc context.CancelFunc
 
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		GlobalCancelFunc()
-		log.Fatalf("Error:%+v", err)
+		if Debug {
+			log.Fatalf("Error:%+v", err)
+		} else {
+			log.Fatalf("Error:%v", err)
+		}
 	}
 }
 func NewChromedpCtx() (context.Context, context.CancelFunc) {
@@ -38,6 +43,7 @@ func initOptions() []chromedp.ExecAllocatorOption {
 }
 func init() {
 	GlobalCtx, GlobalCancelFunc = context.WithCancel(context.Background())
+	rootCmd.PersistentFlags().BoolVar(&Debug, "debug", false, "是否开启Debug模式")
 	rootCmd.AddCommand(loginCmd)
 	rootCmd.AddCommand(seckill)
 	rootCmd.AddCommand(statusCmd)

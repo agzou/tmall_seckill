@@ -7,6 +7,25 @@
 1. 确保已经安装Chrome浏览器.
 2. 下载项目代码
 3. 构建二进制文件
+```shell
+./tmall_seckill 
+Usage:
+  tmall_seckill [command]
+
+Available Commands:
+  help        Help about any command
+  login       登陆账号
+  logout      清除登陆状态
+  seckill     开始抢购
+  status      获取当前登录状态
+
+Flags:
+  -h, --help      help for tmall_seckill
+  -v, --version   version for tmall_seckill
+
+Use "tmall_seckill [command] --help" for more information about a command.
+
+```
 ``` shell
 cd tmall_seckill & go build
 ```

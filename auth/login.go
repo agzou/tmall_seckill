@@ -20,7 +20,7 @@ var sku = "20739895092"
 func Login() chromedp.Action {
 	return chromedp.ActionFunc(func(ctx context.Context) error {
 		var iframes []*cdp.Node
-		err := chromedp.Run(ctx, chromedp.Navigate(`https://login.tmall.com/`), chromedp.Sleep(5*time.Second),
+		err := chromedp.Run(ctx, chromedp.Navigate(`https://login.tmall.com/`),
 			chromedp.Nodes(`J_loginIframe`, &iframes, chromedp.ByID))
 		if err != nil {
 			return errors.WithStack(err)
