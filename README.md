@@ -7,6 +7,9 @@
 1. 确保已经安装Chrome浏览器.
 2. 下载项目代码
 3. 构建二进制文件
+``` shell
+cd tmall_seckill & go build
+```
 ```shell
 ./tmall_seckill 
 Usage:
@@ -25,9 +28,6 @@ Flags:
 
 Use "tmall_seckill [command] --help" for more information about a command.
 
-```
-``` shell
-cd tmall_seckill & go build
 ```
 ## 登录
 ``` shell
