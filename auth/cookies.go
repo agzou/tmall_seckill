@@ -5,7 +5,9 @@ import (
 	"encoding/json"
 	"github.com/chromedp/cdproto/network"
 	"github.com/chromedp/chromedp"
+	"github.com/pkg/errors"
 	"io/ioutil"
+	"log"
 	"os"
 	"path/filepath"
 )
@@ -42,14 +44,14 @@ func SaveCookies() chromedp.Action {
 	return chromedp.ActionFunc(func(ctx context.Context) error {
 		cookies, err := network.GetAllCookies().Do(ctx)
 		if err != nil {
-			return err
+			return errors.WithStack(err)
 		}
 		bytes, err := json.Marshal(cookies)
 		if err != nil {
-			return err
+			return errors.WithStack(err)
 		}
 		err = ioutil.WriteFile(cookiesPath, bytes, os.ModePerm)
-		return err
+		return errors.WithStack(err)
 	})
 }
 
@@ -60,6 +62,10 @@ func RemoveCookies() {
 	}
 }
 func init() {
-	p, _ := os.UserHomeDir()
+	p := os.Args[0]
+	var err error
+	if p, err = filepath.Abs(filepath.Dir(p)); err != nil {
+		log.Fatal(err)
+	}
 	cookiesPath = filepath.Join(p, "cookies.txt")
 }

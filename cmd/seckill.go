@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/chromedp/chromedp"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"log"
 	"time"
@@ -24,9 +25,9 @@ var seckill = &cobra.Command{
 		err := chromedp.Run(ctx, chromedp.Tasks{
 			auth.SetCookies(),
 			chromedp.Navigate("https://www.tmall.com/"),
-			auth.GoCar(target),
+			auth.Buy(target),
 		})
-		return err
+		return errors.WithStack(err)
 
 	},
 }
@@ -34,5 +35,5 @@ var seckill = &cobra.Command{
 func init() {
 	today := time.Now()
 	today = time.Date(today.Year(), today.Month(), today.Day(), 20, 0, 0, 0, today.Location())
-	seckill.Flags().StringVar(&date, "date", today.Format("2006-01-02 15:04:05"), "指定抢购日期")
+	seckill.Flags().StringVarP(&date, "date", "d", today.Format("2006-01-02 15:04:05"), "指定抢购日期")
 }

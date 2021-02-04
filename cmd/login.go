@@ -2,6 +2,7 @@ package cmd
 
 import (
 	"github.com/chromedp/chromedp"
+	"github.com/pkg/errors"
 	"github.com/spf13/cobra"
 	"log"
 	"tmall_seckill/auth"
@@ -17,7 +18,8 @@ var loginCmd = &cobra.Command{
 			auth.Login(), auth.SaveCookies(),
 		})
 		if err != nil {
-			return err
+			return errors.WithStack(err)
+
 		}
 		log.Printf("登陆成功,保存Cookies路径[%s]\n", auth.GetCookiesPath())
 		return nil

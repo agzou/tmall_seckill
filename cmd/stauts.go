@@ -10,7 +10,7 @@ import (
 
 var statusCmd = &cobra.Command{
 	Use:   "status",
-	Short: "获取当前状态",
+	Short: "获取当前登录状态",
 	Run: func(c *cobra.Command, args []string) {
 		if !auth.HasCookies() {
 			log.Printf("当前未登陆!\n")

@@ -5,18 +5,17 @@ import (
 	"github.com/chromedp/chromedp"
 	"github.com/spf13/cobra"
 	"log"
-	"os"
 )
 
 var Version = "v0.01"
-var rootCmd = &cobra.Command{Use: "tmall_seckill", Version: Version}
+var rootCmd = &cobra.Command{Use: "tmall_seckill", Version: Version, SilenceErrors: true}
 var GlobalCtx context.Context
 var GlobalCancelFunc context.CancelFunc
 
 func Execute() {
 	if err := rootCmd.Execute(); err != nil {
 		GlobalCancelFunc()
-		os.Exit(1)
+		log.Fatalf("Error:%+v", err)
 	}
 }
 func NewChromedpCtx() (context.Context, context.CancelFunc) {
