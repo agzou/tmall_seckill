@@ -8,6 +8,7 @@
 *.dylib
 tmall_seckill
 cookies.txt
+.idea
 # Test binary, built with `go test -c`
 *.test
 
