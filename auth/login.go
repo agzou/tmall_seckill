@@ -15,8 +15,6 @@ import (
 	"time"
 )
 
-var sku = "20739895092"
-
 func Login() chromedp.Action {
 	return chromedp.ActionFunc(func(ctx context.Context) error {
 		var iframes []*cdp.Node
@@ -31,7 +29,7 @@ func Login() chromedp.Action {
 			chromedp.WaitNotPresent(`J_loginIframe`, chromedp.ByID))
 	})
 }
-func Buy(targetTime time.Time) chromedp.Action {
+func Buy(targetTime time.Time, sku string) chromedp.Action {
 	return chromedp.Tasks{
 		chromedp.Navigate("https://cart.taobao.com/cart.htm?from=btop"),
 		chromedp.QueryAfter(fmt.Sprintf(`[href$="%s"]`, sku), func(ctx context.Context, id runtime.ExecutionContextID, node ...*cdp.Node) error {
